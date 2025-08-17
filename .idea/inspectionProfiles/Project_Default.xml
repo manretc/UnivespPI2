@@ -1,0 +1,16 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="aulas.flask_aula4_ex2_composicaobloco_herancalayout.my_app.produto.views.my_app" />
+          <option value="aulas.flask_aula4_ex3_processadorcontextocustomizado.my_app.produto.views.my_app" />
+          <option value="aulas.flask_aula4_ex4_filtrojinja2.my_app.produto.views.my_app" />
+          <option value="aulas.flask_aula4_ex4_filtrojinja2.my_app.my_app" />
+          <option value="aulas.flask_aula4_ex5_macro.my_app.my_app" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

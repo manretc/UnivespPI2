@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-lg">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Seu Painel, {{ current_user.username }}!</h1>
+        {% if current_user.user_type == 'donor' %}
+        <a href="{{ url_for('main.create_donation') }}" class="bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-700 transition duration-300">
+            + Registrar Doação
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Seção do Mapa de Doações Disponíveis -->
+    <div class="border-t pt-6">
+        <h2 class="text-2xl font-semibold mb-4 text-center">Mapa de Doações Disponíveis</h2>
+        <div class="flex justify-center items-center bg-gray-200 rounded-lg overflow-hidden mb-8">
+            <img src="{{ map_url }}" alt="Mapa de doações disponíveis" class="max-w-full h-auto">
+        </div>
+    </div>
+
+    <!-- Seção da Lista de Doações Disponíveis -->
+    <div class="border-t pt-6">
+        <h2 class="text-2xl font-semibold mb-4">Doações Disponíveis para Recolhimento</h2>
+        <div class="overflow-x-auto">
+            {% if available_donations %}
+            <table class="min-w-full bg-white border">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="py-3 px-4 border-b text-left">Descrição</th>
+                        <th class="py-3 px-4 border-b text-left">Doador</th>
+                        <th class="py-3 px-4 border-b text-left">Endereço</th>
+                        <th class="py-3 px-4 border-b text-left">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for donation in available_donations %}
+                    <tr class="hover:bg-gray-100">
+                        <td class="py-3 px-4 border-b">{{ donation.description }} ({{ donation.quantity }})</td>
+                        <td class="py-3 px-4 border-b">{{ donation.donor.username }}</td>
+                        <td class="py-3 px-4 border-b">{{ donation.address }}</td>
+                        <td class="py-3 px-4 border-b">
+                            {% if current_user.user_type == 'charity' %}
+                            <form action="{{ url_for('main.claim_donation', donation_id=donation.id) }}" method="post">
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-2 rounded">Irei Recolher</button>
+                            </form>
+                            {% else %}
+                            <span class="text-gray-500 text-sm">Aguardando instituição</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-gray-600">Não há doações disponíveis no momento.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Seção de Doações Reservadas -->
+    <div class="border-t pt-6 mt-8">
+        <h2 class="text-2xl font-semibold mb-4">Doações Aguardando Confirmação de Recolhimento</h2>
+        <div class="overflow-x-auto">
+            {% if claimed_donations %}
+            <table class="min-w-full bg-white border">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="py-3 px-4 border-b text-left">Descrição</th>
+                        <th class="py-3 px-4 border-b text-left">Doador</th>
+                        <th class="py-3 px-4 border-b text-left">Instituição</th>
+                        <th class="py-3 px-4 border-b text-left">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for donation in claimed_donations %}
+                    <tr class="hover:bg-gray-100">
+                        <td class="py-3 px-4 border-b">{{ donation.description }}</td>
+                        <td class="py-3 px-4 border-b">{{ donation.donor.username }}</td>
+                        <td class="py-3 px-4 border-b">{{ donation.claimed_by.username if donation.claimed_by else 'N/A' }}</td>
+                        <td class="py-3 px-4 border-b">
+                            <form action="{{ url_for('main.confirm_collection', donation_id=donation.id) }}" method="post">
+                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white text-sm font-bold py-1 px-2 rounded">Confirmar Recolhimento</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-gray-600">Nenhuma doação aguardando confirmação.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Seção de Histórico de Recolhimentos -->
+    <div class="border-t pt-6 mt-8">
+        <h2 class="text-2xl font-semibold mb-4">Histórico de Recolhimentos</h2>
+        <div class="overflow-x-auto">
+            {% if collected_donations %}
+            <table class="min-w-full bg-white border">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="py-3 px-4 border-b text-left">Descrição</th>
+                        <th class="py-3 px-4 border-b text-left">Doador</th>
+                        <th class="py-3 px-4 border-b text-left">Instituição que Recolheu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for donation in collected_donations %}
+                    <tr class="bg-green-50">
+                        <td class="py-3 px-4 border-b">{{ donation.description }}</td>
+                        <td class="py-3 px-4 border-b">{{ donation.donor.username }}</td>
+                        <td class="py-3 px-4 border-b">{{ donation.claimed_by.username if donation.claimed_by else 'Informação não disponível' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-gray-600">Nenhuma doação foi recolhida ainda.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

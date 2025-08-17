@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-center mb-6">Crie sua Conta</h2>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="mb-4">
+            {{ form.username.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+            {{ form.username(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700", size=32) }}
+            {% for error in form.username.errors %}<p class="text-red-500 text-xs italic">{{ error }}</p>{% endfor %}
+        </div>
+        <div class="mb-4">
+            {{ form.email.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+            {{ form.email(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700", size=32) }}
+            {% for error in form.email.errors %}<p class="text-red-500 text-xs italic">{{ error }}</p>{% endfor %}
+        </div>
+        <div class="mb-4">
+            {{ form.password.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+            {{ form.password(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700", size=32) }}
+            {% for error in form.password.errors %}<p class="text-red-500 text-xs italic">{{ error }}</p>{% endfor %}
+        </div>
+        <div class="mb-4">
+            {{ form.password2.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+            {{ form.password2(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700", size=32) }}
+            {% for error in form.password2.errors %}<p class="text-red-500 text-xs italic">{{ error }}</p>{% endfor %}
+        </div>
+        <div class="mb-4">
+            {{ form.user_type.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+            {{ form.user_type(class="shadow border rounded w-full py-2 px-3 text-gray-700") }}
+            {% for error in form.user_type.errors %}<p class="text-red-500 text-xs italic">{{ error }}</p>{% endfor %}
+        </div>
+        <div class="mb-6">
+            {{ form.address.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+            {{ form.address(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700", size=64) }}
+            {% for error in form.address.errors %}<p class="text-red-500 text-xs italic">{{ error }}</p>{% endfor %}
+        </div>
+        <div class="flex items-center justify-center">
+            {{ form.submit(class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

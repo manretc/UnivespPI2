@@ -1,0 +1,12 @@
+/* app/static/css/style.css */
+/* Este arquivo pode ser usado para adicionar estilos personalizados. */
+
+/* Exemplo: Mudar a fonte padrão se o Inter do Google Fonts não carregar */
+body {
+    font-family: 'Inter', sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Exemplo de uma classe personalizada que você pode querer usar */
+.brand-text {
+    color: #059669; /* Um tom de verde esmeralda, para combinar com o tema */
+}

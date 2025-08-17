@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white p-8 rounded-lg shadow-lg text-center">
+    <h1 class="text-4xl font-bold text-emerald-700 mb-4">Bem-vindo à Rede de Doações de Alimentos</h1>
+    <p class="text-lg text-gray-600 mb-6">Conectando quem tem de sobra com quem mais precisa. Juntos, podemos combater o desperdício e a fome.</p>
+    <div class="mt-8">
+        <a href="{{ url_for('main.register') }}" class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-700 transition duration-300">
+            Faça Parte
+        </a>
+        <a href="{{ url_for('main.login') }}" class="ml-4 bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg hover:bg-gray-300 transition duration-300">
+            Já tenho uma conta
+        </a>
+    </div>
+</div>
+{% endblock %}

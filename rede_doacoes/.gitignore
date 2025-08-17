@@ -1,0 +1,22 @@
+# Ambientes virtuais
+venv/
+*.venv
+env/
+.env
+
+# Arquivos de cache do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Banco de dados local (se usar SQLite para desenvolvimento)
+*.db
+instance/
+
+# Arquivos do PyCharm
+.idea/
+
+# Arquivos de dependências do sistema operacional
+.DS_Store
+Thumbs.db
