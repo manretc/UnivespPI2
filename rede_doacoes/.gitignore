@@ -3,6 +3,7 @@ venv/
 *.venv
 env/
 .env
+.flaskenv
 
 # Arquivos de cache do Python
 __pycache__/

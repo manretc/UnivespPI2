@@ -22,16 +22,25 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
+                    {% if current_user.is_anonymous %}
                     <a href="{{ url_for('main.index') }}" class="font-bold text-xl text-emerald-600">Rede de Doações</a>
+                    {% else %}
+                    <a href="{{ url_for('main.dashboard') }}" class="font-bold text-xl text-emerald-600">Rede de Doações</a>
+                    {% endif %}
                 </div>
                 <div class="flex items-center">
+                    {% if current_user.is_anonymous %}
                     <a href="{{ url_for('main.index') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Início</a>
+                    {% else %}
+                    <a href="{{ url_for('main.dashboard') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Início</a>
+                    {% endif %}
                     <!-- Links dinâmicos baseados no status de login do usuário -->
                     {% if current_user.is_anonymous %}
                     <a href="{{ url_for('main.login') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Entrar</a>
                     <a href="{{ url_for('main.register') }}" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700">Registrar</a>
                     {% else %}
                     <a href="{{ url_for('main.dashboard') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Painel</a>
+                    <a href="{{ url_for('main.editar_perfil') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Editar perfil</a>
                     <a href="{{ url_for('main.logout') }}" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Sair</a>
                     {% endif %}
                 </div>
@@ -60,7 +69,7 @@
 
     <!-- Rodapé -->
     <footer class="bg-white mt-8 py-4 text-center text-sm text-gray-500">
-        <p>&copy; 2024 Rede de Doações de Alimentos. Todos os direitos reservados.</p>
+        <p>&copy; 2025 Rede de Doações de Alimentos. Todos os direitos reservados.</p>
     </footer>
 
 </body>
