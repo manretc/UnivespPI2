@@ -9,3 +9,4 @@ requests
 gunicorn
 pytest
 email_validator
+alembic
