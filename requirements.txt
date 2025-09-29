@@ -10,3 +10,4 @@ gunicorn
 pytest
 email_validator
 alembic
+python-dotenv
