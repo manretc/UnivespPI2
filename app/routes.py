@@ -50,9 +50,7 @@ def register():
         return redirect(url_for("main.dashboard"))
     form = RegistrationForm()
     if form.validate_on_submit():
-        #lat, lon = geocode_address(form.address.data)
-        lat = 51.17887785101041
-        lon = -1.8262270725143503
+        lat, lon = geocode_address(form.address.data)
         if lat is None:
             flash(
                 "Não foi possível encontrar as coordenadas para o endereço fornecido. Tente um endereço mais específico."
@@ -154,9 +152,7 @@ def editar_perfil():
         # Se o endereço mudou, geocodifica novamente
         address_changed = form.address.data != current_user.address
         if address_changed:
-            #lat, lon = geocode_address(form.address.data)
-            lat = 51.17887785101041
-            lon = -1.8262270725143503
+            lat, lon = geocode_address(form.address.data)
             if lat is None:
                 flash(
                     "Não foi possível encontrar as coordenadas para o endereço fornecido. Tente um endereço mais específico."
