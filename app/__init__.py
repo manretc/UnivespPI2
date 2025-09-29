@@ -3,6 +3,7 @@
 # A factory 'create_app' é um padrão que permite criar múltiplas instâncias
 # da aplicação com diferentes configurações, o que é ótimo para testes.
 import os
+import logging
 
 from flask import Flask
 from config import Config
@@ -41,6 +42,8 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+
+    logging.basicConfig(level=logging.INFO)
 
     # Importa e registra o Blueprint.
     # Blueprints ajudam a organizar a aplicação em componentes modulares.
