@@ -17,11 +17,8 @@ logger = logging.getLogger('alembic.env')
 app = create_app()
 app.app_context().push()
 
-
 def get_metadata():
-    if hasattr(target_db, 'metadatas'):
-        return target_db.metadatas[None]
-    return target_db.metadata
+    return db.metadata
 
 
 def run_migrations_offline():
