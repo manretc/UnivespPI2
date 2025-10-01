@@ -24,8 +24,7 @@ class Config:
     # Configuração do banco de dados SQLAlchemy.
     # A URI é lida da variável de ambiente DATABASE_URL.
     # Se não for encontrada, usa um banco de dados SQLite local como fallback.
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-                              'sqlite:///' + os.path.join(basedir, 'app.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
     # Desativa o rastreamento de modificações do SQLAlchemy para economizar recursos,
     # pois não estamos usando o sistema de eventos do Flask-SQLAlchemy.

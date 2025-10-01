@@ -1,10 +1,13 @@
 # app/models.py
 # Define a estrutura do banco de dados usando classes de modelo do SQLAlchemy.
 # Cada classe representa uma tabela no banco de dados.
+import logging
 
 from app import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+
+logger = logging.getLogger(__name__)
 
 
 class User(UserMixin, db.Model):
@@ -26,6 +29,8 @@ class User(UserMixin, db.Model):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
+        engine_url = db.engine.url
+        logger.info(f"[check_password] Banco em uso: {engine_url.host} (URL completa: {engine_url})")
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
