@@ -50,10 +50,5 @@ class BasicTests(unittest.TestCase):
         response = tester.get('/', content_type='html/text')
         self.assertEqual(response.status_code, 200)
         # CORREÇÃO: O teste agora procura pelo texto exato com a acentuação correta.
-        # O 'b' antes da string indica que estamos a comparar bytes, que é como o
-        # Flask envia os dados da resposta.
+        # O 'b' antes da string indica que estamos a comparar bytes, que é como a resposta vem.
         self.assertTrue(b'Rede de Doa\xc3\xa7\xc3\xb5es' in response.data)
-
-
-if __name__ == "__main__":
-    unittest.main()
