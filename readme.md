@@ -57,7 +57,7 @@ pip install \-r requirements.txt
 
 A aplicação utiliza um ficheiro .env para gerir configurações sensíveis.
 
-1. Na raiz do projeto, crie um ficheiro chamado .env.
+1. Na raiz do projeto, crie um ficheiro chamado .env
 2. Copie o conteúdo abaixo para o seu ficheiro .env e preencha os valores corretos:
 
 ```t
