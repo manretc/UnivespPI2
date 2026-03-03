@@ -130,5 +130,64 @@ class FunctionalTests(unittest.TestCase):
         self.assertIn("Recolhimento da doação confirmado com sucesso!".encode('utf-8'), response.data)
 
 
+    def test_login_with_invalid_credentials(self):
+        """Testa login com credenciais invalidas mostra mensagem de erro."""
+        response = self.client.post(
+            url_for('main.login'),
+            data={'username': 'naoexiste', 'password': 'senhaerrada'},
+            follow_redirects=True
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Usuário ou senha inválidos".encode('utf-8'), response.data)
+
+    @patch('app.routes.geocode_address', return_value=(None, None))
+    def test_register_with_geocode_failure(self, mock_geocode):
+        """Testa que usuario nao e criado quando geocode falha."""
+        response = self.client.post(
+            url_for('main.register'),
+            data={
+                'username': 'testgeo',
+                'email': 'geo@example.com',
+                'password': 'password123',
+                'password2': 'password123',
+                'user_type': 'donor',
+                'address': 'Endereco Invalido'
+            },
+            follow_redirects=True
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Não foi possível encontrar as coordenadas".encode('utf-8'), response.data)
+        user = User.query.filter_by(username='testgeo').first()
+        self.assertIsNone(user)
+
+    @patch('app.routes.geocode_address', return_value=(-23.5, -46.6))
+    def test_donor_cannot_claim_donation(self, mock_geocode):
+        """Testa que doador nao pode reservar doacoes (apenas instituicoes)."""
+        donor = User(username='doador2', email='doador2@example.com', user_type='donor',
+                     address='Rua do Doador, 1', latitude=-23.5, longitude=-46.6)
+        donor.set_password('pass')
+        db.session.add(donor)
+        db.session.commit()
+
+        donation = Donation(description='Teste', quantity='5', donor=donor,
+                            address='Rua Teste', latitude=-23.5, longitude=-46.6)
+        db.session.add(donation)
+        db.session.commit()
+
+        self.client.post(url_for('main.login'),
+                         data={'username': 'doador2', 'password': 'pass'},
+                         follow_redirects=True)
+
+        response = self.client.post(
+            url_for('main.claim_donation', donation_id=donation.id),
+            follow_redirects=True
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Apenas instituições podem reservar doações.".encode('utf-8'), response.data)
+        # Doacao continua disponivel
+        donation = Donation.query.get(donation.id)
+        self.assertEqual(donation.status, 'available')
+
+
 if __name__ == '__main__':
     unittest.main()

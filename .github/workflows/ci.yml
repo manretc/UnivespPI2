@@ -30,9 +30,14 @@ jobs:
           ./render-build.sh
         env:
           DATABASE_URL: sqlite:///test.db?check_same_thread=False
+          FLASK_APP: wsgi.py
+          SECRET_KEY: ci-test-secret-key
 
       - name: Rodar testes
         run: pytest
+        env:
+          FLASK_APP: wsgi.py
+          SECRET_KEY: ci-test-secret-key
 
       - name: Deploy no Render
         if: success()

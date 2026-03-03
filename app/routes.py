@@ -1,6 +1,8 @@
 # app/routes.py
 # Versão com lógica para reservar e confirmar recolhimento de doações.
 
+import logging
+
 from flask import render_template, flash, redirect, url_for, request, current_app
 from app import db
 from app.forms import LoginForm, RegistrationForm, DonationForm, EditProfileForm
@@ -10,6 +12,8 @@ import requests
 from urllib.parse import urlencode
 
 from flask import Blueprint
+
+logger = logging.getLogger(__name__)
 
 bp = Blueprint("main", __name__)
 
@@ -70,7 +74,13 @@ def register():
         )
         user.set_password(form.password.data)
         db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            logger.exception("Erro ao registrar usuario")
+            flash("Erro ao registrar. Tente novamente.")
+            return render_template("register.html", title="Registrar", form=form)
         flash("Parabéns, você foi registrado com sucesso!")
         return redirect(url_for("main.login"))
     return render_template("register.html", title="Registrar", form=form)
@@ -100,7 +110,13 @@ def create_donation():
                 longitude=lon,
             )
             db.session.add(donation)
-            db.session.commit()
+            try:
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+                logger.exception("Erro ao registrar doacao")
+                flash("Erro ao registrar doação. Tente novamente.")
+                return render_template("create_donation.html", title="Registrar Doação", form=form)
             flash("Sua doação foi registrada com sucesso!")
             return redirect(url_for("main.dashboard"))
     return render_template("create_donation.html", title="Registrar Doação", form=form)
@@ -176,7 +192,13 @@ def editar_perfil():
         if form.password.data:
             current_user.set_password(form.password.data)
 
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            logger.exception("Erro ao atualizar perfil")
+            flash("Erro ao atualizar perfil. Tente novamente.")
+            return render_template("edit_profile.html", title="Editar Perfil", form=form)
         flash("Seu perfil foi atualizado com sucesso!")
         return redirect(url_for("main.dashboard"))
 
@@ -198,7 +220,13 @@ def claim_donation(donation_id):
     if donation.status == "available":
         donation.status = "claimed"
         donation.claimed_by_id = current_user.id
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            logger.exception("Erro ao reservar doacao %s", donation_id)
+            flash("Erro ao reservar doação. Tente novamente.")
+            return redirect(url_for("main.dashboard"))
         flash("Doação reservada com sucesso! Por favor, proceda com o recolhimento.")
     else:
         flash("Esta doação já não está disponível.")
@@ -214,7 +242,13 @@ def confirm_collection(donation_id):
     if donation.user_id == current_user.id or donation.claimed_by_id == current_user.id:
         if donation.status == "claimed":
             donation.status = "collected"
-            db.session.commit()
+            try:
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+                logger.exception("Erro ao confirmar recolhimento da doacao %s", donation_id)
+                flash("Erro ao confirmar recolhimento. Tente novamente.")
+                return redirect(url_for("main.dashboard"))
             flash("Recolhimento da doação confirmado com sucesso!")
         else:
             flash("Ação inválida para o estado atual da doação.")
@@ -225,13 +259,15 @@ def confirm_collection(donation_id):
 
 # --- FUNÇÕES AUXILIARES (sem alterações) ---
 def geocode_address(address):
+    if not address or len(address) > 500:
+        return None, None
     api_key = current_app.config["GOOGLE_MAPS_API_KEY"]
     if not api_key:
         return None, None
     base_url = "https://maps.googleapis.com/maps/api/geocode/json"
     params = {"address": address, "key": api_key}
     try:
-        response = requests.get(base_url, params=params)
+        response = requests.get(base_url, params=params, timeout=5)
         response.raise_for_status()
         results = response.json().get("results", [])
         if results:

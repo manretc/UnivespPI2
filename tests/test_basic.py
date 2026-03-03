@@ -52,3 +52,24 @@ class BasicTests(unittest.TestCase):
         # CORREÇÃO: O teste agora procura pelo texto exato com a acentuação correta.
         # O 'b' antes da string indica que estamos a comparar bytes, que é como a resposta vem.
         self.assertTrue(b'Rede de Doa\xc3\xa7\xc3\xb5es' in response.data)
+
+    def test_health_endpoint(self):
+        """Verifica se /health retorna 200 com status ok."""
+        tester = self.app.test_client()
+        response = tester.get('/health')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {"status": "ok"})
+
+    def test_dashboard_requires_login(self):
+        """Verifica se /dashboard redireciona para /login sem autenticacao."""
+        tester = self.app.test_client()
+        response = tester.get('/dashboard')
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/login', response.headers['Location'])
+
+    def test_donate_requires_login(self):
+        """Verifica se /donate redireciona para /login sem autenticacao."""
+        tester = self.app.test_client()
+        response = tester.get('/donate')
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/login', response.headers['Location'])

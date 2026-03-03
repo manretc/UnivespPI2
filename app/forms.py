@@ -11,7 +11,7 @@ from wtforms import (
     SelectField,
     TextAreaField,
 )
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length, Optional
 from app.models import User
 from flask_login import current_user
 
@@ -43,7 +43,10 @@ class RegistrationForm(FlaskForm):
         ],
     )
     password = PasswordField(
-        "Senha", validators=[DataRequired(message="Campo obrigatório.")]
+        "Senha", validators=[
+            DataRequired(message="Campo obrigatório."),
+            Length(min=8, message="A senha deve ter no mínimo 8 caracteres."),
+        ]
     )
     password2 = PasswordField(
         "Repita a Senha",
@@ -114,7 +117,10 @@ class EditProfileForm(FlaskForm):
         "Endereço Completo (Rua, Número, Cidade, Estado)",
         validators=[DataRequired(message="Campo obrigatório.")],
     )
-    password = PasswordField("Nova Senha (opcional)")
+    password = PasswordField("Nova Senha (opcional)", validators=[
+        Optional(),
+        Length(min=8, message="A senha deve ter no mínimo 8 caracteres."),
+    ])
     password2 = PasswordField(
         "Repita a Senha",
         validators=[EqualTo("password", message="As senhas devem ser iguais.")],
