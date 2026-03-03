@@ -32,8 +32,7 @@ jobs:
           DATABASE_URL: sqlite:///test.db?check_same_thread=False
 
       - name: Rodar testes
-        run: |
-          pytest || echo "Sem testes configurados"
+        run: pytest
 
       - name: Deploy no Render
         if: success()

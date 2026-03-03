@@ -14,7 +14,11 @@ from flask import Blueprint
 bp = Blueprint("main", __name__)
 
 
-# ... (rotas /index, /login, /logout, /register, /donate não mudam) ...
+@bp.route("/health")
+def health():
+    return {"status": "ok"}, 200
+
+
 @bp.route("/")
 @bp.route("/index")
 def index():

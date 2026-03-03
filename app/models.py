@@ -29,8 +29,6 @@ class User(UserMixin, db.Model):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        engine_url = db.engine.url
-        logger.info(f"[check_password] Banco em uso: {engine_url.host} (URL completa: {engine_url})")
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):

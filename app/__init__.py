@@ -1,24 +1,16 @@
-import os
 import logging
 
 from flask import Flask
 from config import Config
-from dotenv import load_dotenv
 
 from app.extensions import db, migrate, login_manager
 
-load_dotenv()
 
 def create_app(config_class=Config):
     """
     Factory da aplicação. Cria e configura uma instância do Flask.
     """
     app = Flask(__name__)
-
-    app.config["SECRET_KEY"] = "sua_chave_secreta"
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
     app.config.from_object(config_class)
 
     # Inicializa extensões
