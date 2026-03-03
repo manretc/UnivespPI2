@@ -3,4 +3,6 @@ set -e
 
 pip install -r requirements.txt
 
-alembic upgrade head
+# alembic upgrade head
+
+flask db upgrade
