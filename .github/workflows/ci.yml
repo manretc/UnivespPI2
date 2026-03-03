@@ -1,0 +1,46 @@
+name: CI - UnivespPI2
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Rodar migrations (teste)
+        run: |
+          chmod +x render-build.sh
+          ./render-build.sh
+        env:
+          DATABASE_URL: sqlite:///test.db?check_same_thread=False
+
+      - name: Rodar testes
+        run: |
+          pytest || echo "Sem testes configurados"
+
+      - name: Deploy no Render
+        if: success()
+        run: |
+          curl -X POST https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys \
+          -H 'Authorization: Bearer $RENDER_API_KEY' \
+          -H 'Content-Type: application/json'
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}

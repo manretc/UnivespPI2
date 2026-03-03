@@ -7,7 +7,6 @@ import logging
 
 from flask import Flask
 from config import Config
-from .extensions import db
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -52,8 +51,6 @@ def create_app(config_class=Config):
     app.register_blueprint(main_bp)
 
     return app
-
-app = create_app()
 
 # Importa os modelos no final para evitar problemas de importação circular.
 # O SQLAlchemy precisa conhecer os modelos para criar as tabelas.
