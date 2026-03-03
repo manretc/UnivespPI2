@@ -1,7 +1,9 @@
 import logging
 from logging.config import fileConfig
 
+import os
 from flask import current_app
+from flask_migrate import Migrate
 from alembic import context
 from app import create_app, db
 
@@ -15,7 +17,6 @@ fileConfig(config.config_file_name)
 logger = logging.getLogger('alembic.env')
 
 app = create_app()
-app.app_context().push()
 
 def get_metadata():
     return db.metadata
