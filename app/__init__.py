@@ -8,7 +8,6 @@ import logging
 from flask import Flask
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from flask_login import LoginManager
 from dotenv import load_dotenv
 
@@ -18,8 +17,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-db = SQLAlchemy()
-migrate = Migrate()
 login_manager = LoginManager()
 # Define a view (rota) para a qual usuários não autenticados serão redirecionados.
 login_manager.login_view = 'main.login'
