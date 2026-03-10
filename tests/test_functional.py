@@ -15,7 +15,6 @@ class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
     WTF_CSRF_ENABLED = False
-    GOOGLE_MAPS_API_KEY = 'fake-key-for-testing'
     SERVER_NAME = 'localhost'
 
 

@@ -16,19 +16,80 @@
       {% endif %}
     </div>
 
-    <!-- Seção do Mapa de Doações Disponíveis -->
+    <!-- Seção do Mapa de Doações Disponíveis (OpenLayers) -->
     <div class="border-t pt-6" role="region" aria-labelledby="titulo-mapa">
       <h2 id="titulo-mapa" class="text-2xl font-semibold mb-4 text-center">Mapa de Doações Disponíveis</h2>
-      <div
-        class="flex justify-center items-center bg-gray-200 rounded-lg overflow-hidden mb-8"
-      >
-        <img
-          src="{{ map_url }}"
-          alt="Mapa de doações disponíveis"
-          class="max-w-full h-auto"
-        />
+      <div class="flex justify-center items-center bg-gray-200 rounded-lg overflow-hidden mb-8">
+        {% if donations_coords %}
+          <div id="map" style="width: 100%; height: 400px;"></div>
+        {% else %}
+          <div class="py-12 text-gray-500">Nenhuma doação disponível no mapa.</div>
+        {% endif %}
       </div>
     </div>
+
+    {% if donations_coords %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10/ol.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ol@10/dist/ol.js"></script>
+    <script>
+      (function() {
+        var donations = {{ donations_coords | tojson }};
+
+        var features = donations.map(function(d) {
+          var feature = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([d.lon, d.lat])),
+            description: d.desc
+          });
+          feature.setStyle(new ol.style.Style({
+            image: new ol.style.Circle({
+              radius: 8,
+              fill: new ol.style.Fill({ color: '#dc2626' }),
+              stroke: new ol.style.Stroke({ color: '#fff', width: 2 })
+            })
+          }));
+          return feature;
+        });
+
+        var vectorSource = new ol.source.Vector({ features: features });
+        var vectorLayer = new ol.layer.Vector({ source: vectorSource });
+
+        var map = new ol.Map({
+          target: 'map',
+          layers: [
+            new ol.layer.Tile({ source: new ol.source.OSM() }),
+            vectorLayer
+          ],
+          view: new ol.View({
+            center: ol.proj.fromLonLat([donations[0].lon, donations[0].lat]),
+            zoom: 12
+          })
+        });
+
+        // Ajusta o zoom para mostrar todos os pontos
+        if (features.length > 1) {
+          map.getView().fit(vectorSource.getExtent(), { padding: [40, 40, 40, 40], maxZoom: 15 });
+        }
+
+        // Popup ao clicar no marcador
+        var popup = document.createElement('div');
+        popup.className = 'bg-white p-2 rounded shadow text-sm';
+        popup.style.display = 'none';
+        var overlay = new ol.Overlay({ element: popup, positioning: 'bottom-center', offset: [0, -12] });
+        map.addOverlay(overlay);
+
+        map.on('click', function(evt) {
+          var feature = map.forEachFeatureAtPixel(evt.pixel, function(f) { return f; });
+          if (feature) {
+            popup.innerHTML = feature.get('description');
+            popup.style.display = 'block';
+            overlay.setPosition(evt.coordinate);
+          } else {
+            popup.style.display = 'none';
+          }
+        });
+      })();
+    </script>
+    {% endif %}
 
     <!-- Seção da Lista de Doações Disponíveis -->
     <div class="border-t pt-6" role="region" aria-labelledby="titulo-disponiveis">

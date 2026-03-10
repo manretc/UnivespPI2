@@ -34,6 +34,3 @@ class Config:
     # Desativa o rastreamento de modificações do SQLAlchemy para economizar recursos,
     # pois não estamos usando o sistema de eventos do Flask-SQLAlchemy.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    # Chave da API do Google Maps, lida das variáveis de ambiente.
-    GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')

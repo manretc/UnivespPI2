@@ -9,7 +9,6 @@ from app.forms import LoginForm, RegistrationForm, DonationForm, EditProfileForm
 from app.models import User, Donation
 from flask_login import current_user, login_user, logout_user, login_required
 import requests
-from urllib.parse import urlencode
 
 from flask import Blueprint
 
@@ -147,14 +146,18 @@ def dashboard():
     # Combina as listas de doações reservadas para simplificar o template
     claimed_donations = claimed_by_me + my_donations_claimed
 
-    map_url = generate_static_map_url(available_donations)
+    donations_coords = [
+        {"lat": d.latitude, "lon": d.longitude, "desc": d.description}
+        for d in available_donations
+        if d.latitude is not None and d.longitude is not None
+    ]
     return render_template(
         "dashboard.html",
         title="Painel",
         available_donations=available_donations,
         claimed_donations=claimed_donations,
         collected_donations=collected_donations,
-        map_url=map_url,
+        donations_coords=donations_coords,
     )
 
 
@@ -257,39 +260,20 @@ def confirm_collection(donation_id):
     return redirect(url_for("main.dashboard"))
 
 
-# --- FUNÇÕES AUXILIARES (sem alterações) ---
+# --- FUNÇÕES AUXILIARES ---
 def geocode_address(address):
+    """Geocodifica um endereço usando Nominatim (OpenStreetMap) — gratuito."""
     if not address or len(address) > 500:
         return None, None
-    api_key = current_app.config["GOOGLE_MAPS_API_KEY"]
-    if not api_key:
-        return None, None
-    base_url = "https://maps.googleapis.com/maps/api/geocode/json"
-    params = {"address": address, "key": api_key}
+    base_url = "https://nominatim.openstreetmap.org/search"
+    params = {"q": address, "format": "json", "limit": 1}
+    headers = {"User-Agent": "RedeDoacoes/1.0"}
     try:
-        response = requests.get(base_url, params=params, timeout=5)
+        response = requests.get(base_url, params=params, headers=headers, timeout=5)
         response.raise_for_status()
-        results = response.json().get("results", [])
+        results = response.json()
         if results:
-            location = results[0]["geometry"]["location"]
-            return location["lat"], location["lng"]
-    except requests.exceptions.RequestException:
+            return float(results[0]["lat"]), float(results[0]["lon"])
+    except (requests.exceptions.RequestException, ValueError, KeyError):
         return None, None
     return None, None
-
-
-def generate_static_map_url(donations):
-    api_key = current_app.config["GOOGLE_MAPS_API_KEY"]
-    if not api_key or not donations:
-        return (
-            "https://placehold.co/600x400/e2e8f0/64748b?text=Nenhuma+doacao+disponivel"
-        )
-    base_url = "https://maps.googleapis.com/maps/api/staticmap"
-    markers = [f"{d.latitude},{d.longitude}" for d in donations]
-    params = {
-        "size": "600x400",
-        "maptype": "roadmap",
-        "markers": "color:red|" + "|".join(markers),
-        "key": api_key,
-    }
-    return f"{base_url}?{urlencode(params)}"

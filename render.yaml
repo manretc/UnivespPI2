@@ -11,8 +11,6 @@ services:
         fromDatabase:
           name: univespi-db
           property: connectionString
-      - key: GOOGLE_MAPS_API_KEY
-        sync: false
       - key: FLASK_APP
         value: wsgi.py
 

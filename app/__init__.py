@@ -27,8 +27,6 @@ def create_app(config_class=Config):
 
     # Validacao de variaveis de ambiente no startup
     logger = logging.getLogger(__name__)
-    if not app.config.get('GOOGLE_MAPS_API_KEY'):
-        logger.warning("GOOGLE_MAPS_API_KEY nao configurada — geocoding desabilitado")
     if app.config.get('SECRET_KEY') == 'uma-chave-secreta-muito-dificil-de-adivinhar' and not app.config.get('TESTING'):
         logger.warning("SECRET_KEY usando valor padrao — defina SECRET_KEY em producao")
 
