@@ -187,6 +187,45 @@ class FunctionalTests(unittest.TestCase):
         donation = Donation.query.get(donation.id)
         self.assertEqual(donation.status, 'available')
 
+    def test_impacto_page_renders_correctly(self):
+        """Verifica se a página de impacto carrega e calcula os dados corretamente."""
+        # 1. Criar usuários de teste (um doador e uma instituição)
+        donor = User(username='doador_impacto', email='doador_imp@example.com', user_type='donor',
+                     address='Rua A', latitude=0.0, longitude=0.0)
+        charity = User(username='inst_impacto', email='inst_imp@example.com', user_type='charity',
+                       address='Rua B', latitude=0.0, longitude=0.0)
+        donor.set_password('pass')
+        charity.set_password('pass')
+        db.session.add_all([donor, charity])
+        db.session.commit()
+
+        # 2. Criar doações de teste para gerar estatísticas
+        # Uma doação concluída (collected)
+        donation1 = Donation(description='Arroz', quantity='5kg', donor=donor,
+                             address='Rua A', latitude=0.0, longitude=0.0,
+                             status='collected', claimed_by_id=charity.id)
+        # Uma doação disponível
+        donation2 = Donation(description='Feijão', quantity='2kg', donor=donor,
+                             address='Rua A', latitude=0.0, longitude=0.0,
+                             status='available')
+
+        db.session.add_all([donation1, donation2])
+        db.session.commit()
+
+        # 3. Simular o acesso à página de impacto
+        response = self.client.get(url_for('main.impacto'))
+
+        # 4. Verificações (Asserts)
+        # A página deve carregar com sucesso (Status 200 OK)
+        self.assertEqual(response.status_code, 200)
+
+        # O título da página deve estar presente no HTML retornado
+        self.assertIn(b'Impacto Social', response.data)
+
+        # Os nomes dos usuários do topo do ranking devem aparecer no HTML
+        self.assertIn(b'doador_impacto', response.data)
+        self.assertIn(b'inst_impacto', response.data)
+
 
 if __name__ == '__main__':
     unittest.main()

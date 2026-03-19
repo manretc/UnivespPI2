@@ -1,0 +1,107 @@
+Listagem de caminhos de pasta para o volume Windows-SSD
+O número de série do volume é 7471-C967
+C:.
+|   .env.example
+|   .gitignore
+|   alembic.ini
+|   config.py
+|   environment.bat
+|   readme.md
+|   render-build.sh
+|   render.yaml
+|   requirements.txt
+|   wsgi.py
+|   
++---.github
+|   \---workflows
+|           ci.yml
+|           
++---.idea
+|   |   .gitignore
+|   |   misc.xml
+|   |   modules.xml
+|   |   PI_Manre_Univesp.iml
+|   |   vcs.xml
+|   |   
+|   \---inspectionProfiles
+|           profiles_settings.xml
+|           Project_Default.xml
+|           
++---app
+|   |   config.py
+|   |   extensions.py
+|   |   forms.py
+|   |   models.py
+|   |   routes.py
+|   |   __init__.py
+|   |   
+|   +---static
+|   |   \---css
+|   |           style.css
+|   |           
+|   \---templates
+|           base.html
+|           create_donation.html
+|           dashboard.html
+|           edit_profile.html
+|           index.html
+|           login.html
+|           register.html
+|           
++---docs
+|   |   conf.py
+|   |   index.rst
+|   |   make.bat
+|   |   Makefile
+|   |   
+|   \---_build
+|       |   .buildinfo
+|       |   .buildinfo.bak
+|       |   genindex.html
+|       |   index.html
+|       |   objects.inv
+|       |   py-modindex.html
+|       |   search.html
+|       |   searchindex.js
+|       |   
+|       +---.doctrees
+|       |       environment.pickle
+|       |       index.doctree
+|       |       
+|       +---_sources
+|       |       index.rst.txt
+|       |       
+|       \---_static
+|               alabaster.css
+|               base-stemmer.js
+|               basic.css
+|               custom.css
+|               doctools.js
+|               documentation_options.js
+|               file.png
+|               github-banner.svg
+|               language_data.js
+|               minus.png
+|               plus.png
+|               portuguese-stemmer.js
+|               pygments.css
+|               searchtools.js
+|               sphinx_highlight.js
+|               translations.js
+|               
++---migrations
+|   |   alembic.ini
+|   |   env.py
+|   |   README
+|   |   script.py.mako
+|   |   
+|   \---versions
+|           5b140000fb91_criacao_inicial_das_tabelas.py
+|           84e9e1f92736_aumenta_tamanho_do_password_hash.py
+|           edc5ba8906d0_adiciona_campo_claimed_by_a_doacao.py
+|           
+\---tests
+        test_basic.py
+        test_functional.py
+        __init__.py
+        
