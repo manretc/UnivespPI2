@@ -9,8 +9,8 @@ from app.forms import LoginForm, RegistrationForm, DonationForm, EditProfileForm
 from app.models import User, Donation
 from flask_login import current_user, login_user, logout_user, login_required
 import requests
-
 from flask import Blueprint
+from sqlalchemy import func
 
 logger = logging.getLogger(__name__)
 
@@ -259,6 +259,56 @@ def confirm_collection(donation_id):
         flash("Você não tem permissão para realizar esta ação.")
     return redirect(url_for("main.dashboard"))
 
+
+@bp.route("/impacto")
+def impacto():
+    """Rota para a Página de Métricas de Impacto Social (Social ROI)"""
+    # 1. Indicadores Gerais
+    total_donations = Donation.query.count()
+    collected_donations = Donation.query.filter_by(status='collected').count()
+
+    # 2. Indicadores de Usuários
+    total_donors = User.query.filter_by(user_type='donor').count()
+    total_charities = User.query.filter_by(user_type='charity').count()
+
+    # 3. Listagem de quantidades salvas
+    collected_items = Donation.query.filter_by(status='collected').order_by(Donation.id.desc()).limit(10).all()
+
+    # 4. Dados para Gráfico de Status
+    status_counts = {
+        'available': Donation.query.filter_by(status='available').count(),
+        'claimed': Donation.query.filter_by(status='claimed').count(),
+        'collected': collected_donations
+    }
+
+    # 5. RANKINGS (Top 5)
+    top_donors = db.session.query(User.username, func.count(Donation.id).label('total')) \
+        .join(Donation, User.id == Donation.user_id) \
+        .group_by(User.id).order_by(func.count(Donation.id).desc()).limit(5).all()
+
+    top_charities = db.session.query(User.username, func.count(Donation.id).label('total')) \
+        .join(Donation, User.id == Donation.claimed_by_id) \
+        .filter(Donation.status == 'collected') \
+        .group_by(User.id).order_by(func.count(Donation.id).desc()).limit(5).all()
+
+    # 6. DADOS TEMPORAIS (Para o gráfico de linhas)
+    # Pegamos todas as datas de doações cadastradas
+    all_donations = Donation.query.with_entities(Donation.created_at).all()
+    donation_dates = [d[0].strftime('%Y-%m-%d') for d in all_donations if d[0] is not None]
+
+    return render_template(
+        "impacto.html",
+        title="Impacto Social",
+        total_donations=total_donations,
+        collected_donations=collected_donations,
+        total_donors=total_donors,
+        total_charities=total_charities,
+        collected_items=collected_items,
+        status_counts=status_counts,
+        top_donors=top_donors,
+        top_charities=top_charities,
+        donation_dates=donation_dates
+    )
 
 # --- FUNÇÕES AUXILIARES ---
 def geocode_address(address):

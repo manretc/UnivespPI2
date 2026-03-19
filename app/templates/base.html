@@ -3,13 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Título dinâmico da página -->
     <title>
       {% if title %}{{ title }} - Rede de Doações{% else %}Rede de Doações{%endif %}
     </title>
-    <!-- Tailwind CSS para estilização rápida e responsiva -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Link para a folha de estilos personalizada -->
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}"
@@ -33,7 +30,6 @@
       >Pular para o conteúdo principal</a
     >
 
-    <!-- Barra de Navegação -->
     <nav class="bg-white shadow-md" aria-label="Principal">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
@@ -70,8 +66,12 @@
                 >Início</a
               >
             {% endif %}
-            <!-- Links dinâmicos baseados no status de login do usuário -->
             {% if current_user.is_anonymous %}
+              <a
+                href="{{ url_for('main.impacto') }}"
+                class="px-3 py-2 rounded-md text-sm font-medium text-emerald-700 hover:bg-emerald-100 font-bold mr-2"
+                >Impacto Social 📊</a
+              >
               <a
                 href="{{ url_for('main.login') }}"
                 class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200"
@@ -85,6 +85,11 @@
                 >Registrar</a
               >
             {% else %}
+              <a
+                href="{{ url_for('main.impacto') }}"
+                class="px-3 py-2 rounded-md text-sm font-medium text-emerald-700 hover:bg-emerald-100 font-bold mr-2"
+                >Impacto Social 📊</a
+              >
               <a
                 href="{{ url_for('main.dashboard') }}"
                 class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200"
@@ -108,13 +113,11 @@
       </div>
     </nav>
 
-    <!-- Conteúdo Principal -->
     <main
       id="conteudo-principal"
       tabindex="-1"
       class="flex-grow container mx-auto mt-8 p-4"
     >
-      <!-- Exibição de mensagens flash (alertas) -->
       {% with messages = get_flashed_messages() %}
         {% if messages %}
           <div class="mb-4" aria-live="polite">
@@ -130,11 +133,9 @@
         {% endif %}
       {% endwith %}
 
-      <!-- Bloco de conteúdo que será substituído pelos templates filhos -->
       {% block content %}{% endblock %}
     </main>
 
-    <!-- Rodapé -->
     <footer class="bg-white mt-8 py-4 text-center text-sm text-gray-500">
       <p>
         &copy; 2025 Rede de Doações de Alimentos. Todos os direitos reservados.

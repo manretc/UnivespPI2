@@ -4,6 +4,7 @@
 from app.extensions import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from datetime import datetime
 
 
 class User(UserMixin, db.Model):
@@ -51,6 +52,8 @@ class Donation(db.Model):
     claimed_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     # NOVO: Relacionamento para aceder facilmente ao objeto User da instituição.
     claimed_by = db.relationship('User', foreign_keys=[claimed_by_id])
+    # NOVO CAMPO DE DATA:
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return f'<Donation {self.description}>'

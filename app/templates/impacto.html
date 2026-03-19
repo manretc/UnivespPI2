@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="bg-white p-6 rounded-lg shadow-lg">
+    <div class="mb-6 text-center">
+      <h1 class="text-3xl font-bold text-emerald-800">Métricas de Impacto Social 🌍</h1>
+      <p class="text-gray-600 mt-2">Transparência e resultados da nossa rede logística de doações.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-lg text-center shadow-sm">
+        <h3 class="text-gray-500 text-sm font-semibold uppercase tracking-wider">Doações Concluídas</h3>
+        <p class="text-4xl font-bold text-emerald-600 my-2">{{ collected_donations }}</p>
+      </div>
+      <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg text-center shadow-sm">
+        <h3 class="text-gray-500 text-sm font-semibold uppercase tracking-wider">Total Ofertado</h3>
+        <p class="text-4xl font-bold text-blue-600 my-2">{{ total_donations }}</p>
+      </div>
+      <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg text-center shadow-sm">
+        <h3 class="text-gray-500 text-sm font-semibold uppercase tracking-wider">Instituições Parceiras</h3>
+        <p class="text-4xl font-bold text-yellow-600 my-2">{{ total_charities }}</p>
+      </div>
+      <div class="bg-purple-50 border border-purple-200 p-4 rounded-lg text-center shadow-sm">
+        <h3 class="text-gray-500 text-sm font-semibold uppercase tracking-wider">Doadores Ativos</h3>
+        <p class="text-4xl font-bold text-purple-600 my-2">{{ total_donors }}</p>
+      </div>
+    </div>
+
+    <div class="bg-gray-50 p-4 rounded-lg border mb-8">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">Evolução de Doações Ofertadas</h2>
+        <select id="timeFilter" class="border rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500">
+          <option value="daily">Últimos 7 Dias</option>
+          <option value="monthly">Mensal (Este Ano)</option>
+        </select>
+      </div>
+      <div class="relative h-64 w-full">
+        <canvas id="temporalChart"></canvas>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+
+      <div class="bg-gray-50 p-4 rounded-lg border">
+        <h2 class="text-lg font-semibold text-center mb-4">Status Logístico</h2>
+        <div class="relative h-48 w-full">
+          <canvas id="statusChart"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-lg border">
+        <h2 class="text-lg font-semibold text-center text-purple-700 mb-4">🏆 Top Doadores</h2>
+        <ul class="divide-y divide-gray-200">
+          {% for username, total in top_donors %}
+            <li class="py-2 flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-800">{{ loop.index }}. {{ username }}</span>
+              <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-bold rounded-full">{{ total }} itens</span>
+            </li>
+          {% else %}
+            <p class="text-sm text-gray-500 text-center italic mt-2">Nenhum doador registado.</p>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-lg border">
+        <h2 class="text-lg font-semibold text-center text-emerald-700 mb-4">🤝 Top Instituições (Recolhas)</h2>
+        <ul class="divide-y divide-gray-200">
+          {% for username, total in top_charities %}
+            <li class="py-2 flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-800">{{ loop.index }}. {{ username }}</span>
+              <span class="px-2 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">{{ total }} recolhas</span>
+            </li>
+          {% else %}
+            <p class="text-sm text-gray-500 text-center italic mt-2">Nenhuma recolha finalizada.</p>
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Gráfico de Status (Roscas)
+      const ctxStatus = document.getElementById('statusChart').getContext('2d');
+      new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+          labels: ['Disponíveis', 'Aguardando', 'Concluídas'],
+          datasets: [{
+            data: [{{ status_counts['available'] }}, {{ status_counts['claimed'] }}, {{ status_counts['collected'] }}],
+            backgroundColor: ['#3b82f6', '#eab308', '#10b981'],
+            borderWidth: 1
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      // 2. Gráfico Temporal Interativo
+      const rawDates = {{ donation_dates | tojson }};
+
+      // Funções para processar os dados por dia ou mês
+      function processDailyData() {
+        const counts = {};
+        // Pega os últimos 7 dias
+        for(let i=6; i>=0; i--) {
+          let d = new Date();
+          d.setDate(d.getDate() - i);
+          counts[d.toISOString().split('T')[0]] = 0;
+        }
+        rawDates.forEach(date => { if(counts[date] !== undefined) counts[date]++; });
+        return { labels: Object.keys(counts), data: Object.values(counts) };
+      }
+
+      function processMonthlyData() {
+        // Cria uma lista com 12 zeros (um para cada mês, de 0 a 11)
+        const counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+        rawDates.forEach(date => {
+          // Pega a data '2026-03-19', divide no traço e converte o '03' para o número 3.
+          // Subtraímos 1 porque as listas em programação começam no zero (Janeiro = 0, Março = 2)
+          const monthIndex = parseInt(date.split('-')[1], 10) - 1;
+
+          if(monthIndex >= 0 && monthIndex < 12) {
+            counts[monthIndex]++;
+          }
+        });
+
+        return { labels: months, data: counts };
+      }
+
+      const ctxTemporal = document.getElementById('temporalChart').getContext('2d');
+      let temporalChart = new Chart(ctxTemporal, {
+        type: 'line',
+        data: {
+          labels: processDailyData().labels,
+          datasets: [{
+            label: 'Novas Doações',
+            data: processDailyData().data,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      // Lógica de filtro (dropdown)
+      document.getElementById('timeFilter').addEventListener('change', function(e) {
+        let newData = e.target.value === 'monthly' ? processMonthlyData() : processDailyData();
+        temporalChart.data.labels = newData.labels;
+        temporalChart.data.datasets[0].data = newData.data;
+        temporalChart.update();
+      });
+    });
+  </script>
+{% endblock %}
