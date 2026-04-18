@@ -1,25 +1,110 @@
 {% extends "base.html" %}
 {% block content %}
-  <div
-    class="bg-white p-8 rounded-lg shadow-lg text-center"
-    role="region"
-    aria-labelledby="titulo-home"
-  >
-    <h1 id="titulo-home" class="text-4xl font-bold text-emerald-700 mb-4">Bem-vindo à Rede de Doações de Alimentos</h1>
-    <p class="text-lg text-gray-600 mb-6">Conectando quem tem de sobra com quem mais precisa. Juntos, podemos combater o desperdício e a fome.</p>
-    <div class="mt-8">
-      <a
-        href="{{ url_for('main.register') }}"
-        class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-700 transition duration-300"
-      >
-        Faça Parte
-      </a>
-      <a
-        href="{{ url_for('main.login') }}"
-        class="ml-4 bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg hover:bg-gray-300 transition duration-300"
-      >
-        Já tenho uma conta
-      </a>
+  <div class="space-y-16 pb-12">
+    <div
+      class="bg-gradient-to-br from-emerald-50 via-white to-emerald-50 p-12 rounded-3xl shadow-2xl text-center border border-emerald-100"
+      role="region"
+      aria-labelledby="titulo-home"
+    >
+      <h1 id="titulo-home" class="text-5xl md:text-6xl font-black text-emerald-800 mb-6 tracking-tight">Rede de Doações</h1>
+      <p class="text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+        Uma aplicação web criada para conectar doadores a instituições e pessoas que necessitam de apoio, transformando a tecnologia numa ferramenta de solidariedade prática e eficiente.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="{{ url_for('main.register') }}" class="bg-emerald-600 text-white text-lg font-bold py-4 px-10 rounded-2xl hover:bg-emerald-700 transform hover:-translate-y-1 transition-all shadow-lg">Faça Parte</a>
+        <a href="{{ url_for('main.login') }}" class="bg-white text-emerald-700 border-2 border-emerald-600 text-lg font-bold py-4 px-10 rounded-2xl hover:bg-emerald-50 transition-all">Já tenho uma conta</a>
+      </div>
     </div>
+
+    <section class="grid lg:grid-cols-2 gap-12 items-center px-4">
+      <div class="space-y-6">
+        <h2 class="text-4xl font-bold text-gray-800">Quem Somos</h2>
+        <p class="text-lg text-gray-700 leading-relaxed">
+          Somos uma plataforma digital que promove a solidariedade de forma organizada e transparente. O nosso objetivo é simplificar o ciclo da doação, oferecendo um ambiente seguro onde cada utilizador pode visualizar a diferença que está a fazer através de métricas de impacto real.
+        </p>
+        <div class="bg-emerald-100 p-6 rounded-xl border-l-8 border-emerald-500">
+          <p class="text-emerald-900 font-semibold italic">
+            "Acreditamos que pequenas atitudes podem gerar grandes transformações e fortalecer redes de apoio essenciais."
+          </p>
+        </div>
+      </div>
+      <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 space-y-6">
+        <h3 class="text-2xl font-bold text-emerald-700">Diferenciação de Perfis</h3>
+        <div class="space-y-4">
+          <div class="flex gap-4">
+            <div class="flex-shrink-0 w-10 h-10 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold">D</div>
+            <div>
+              <h4 class="font-bold text-gray-800">Doador (Pessoa Singular)</h4>
+              <p class="text-sm text-gray-600">Focado em registar itens (descrição e local) e disponibilizar doações no sistema.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">I</div>
+            <div>
+              <h4 class="font-bold text-gray-800">Instituição (Organização)</h4>
+              <p class="text-sm text-gray-600">Utiliza o mapa interativo para localizar oportunidades e coordenar recolhas de mantimentos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-4xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-gray-800 mb-10 text-center">Guia Detalhado de Utilização</h2>
+
+      <div class="space-y-6">
+        <details class="group bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden" open>
+          <summary class="flex items-center justify-between p-6 cursor-pointer list-none hover:bg-emerald-50 transition-colors">
+            <div class="flex items-center gap-4">
+              <span class="bg-emerald-700 text-white w-12 h-12 rounded-xl flex items-center justify-center font-bold shadow-sm text-xl">01</span>
+              <span class="text-2xl font-bold text-gray-800">Acesso e Identificação Segura</span>
+            </div>
+            <span class="text-emerald-600 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <div class="p-8 pt-0 text-gray-700 border-t border-gray-100 bg-gray-50 leading-relaxed text-lg">
+            <p>O processo inicia-se com o acesso via navegador ao sistema da Rede de Doações. Aqui, o utilizador deve escolher entre realizar o login com credenciais existentes ou efetuar um registo simples, definindo se atuará como Doador ou Instituição parceira. Após a autenticação, o acesso ao painel personalizado é libertado.</p>
+          </div>
+        </details>
+
+        <details class="group bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
+          <summary class="flex items-center justify-between p-6 cursor-pointer list-none hover:bg-emerald-50 transition-colors">
+            <div class="flex items-center gap-4">
+              <span class="bg-emerald-700 text-white w-12 h-12 rounded-xl flex items-center justify-center font-bold shadow-sm text-xl">02</span>
+              <span class="text-2xl font-bold text-gray-800">Registo de Ofertas e Itens</span>
+            </div>
+            <span class="text-emerald-600 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <div class="p-8 pt-0 text-gray-700 border-t border-gray-100 bg-gray-50 leading-relaxed text-lg">
+            <p>No painel, o doador preenche detalhadamente a descrição da doação, incluindo o tipo de item e o local exato para recolha. Ao confirmar o envio, o sistema processa os dados, exibe uma mensagem de sucesso e armazena a oferta de forma permanente na base de dados.</p>
+          </div>
+        </details>
+
+        <details class="group bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
+          <summary class="flex items-center justify-between p-6 cursor-pointer list-none hover:bg-emerald-50 transition-colors">
+            <div class="flex items-center gap-4">
+              <span class="bg-emerald-700 text-white w-12 h-12 rounded-xl flex items-center justify-center font-bold shadow-sm text-xl">03</span>
+              <span class="text-2xl font-bold text-gray-800">Interatividade Geográfica</span>
+            </div>
+            <span class="text-emerald-600 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <div class="p-8 pt-0 text-gray-700 border-t border-gray-100 bg-gray-50 leading-relaxed text-lg">
+            <p>Todas as doações validadas tornam-se visíveis no mapa interativo e em listas organizadas. Instituições interessadas podem navegar geograficamente para encontrar doações próximas, iniciando o contacto ou agendando a recolha física dos mantimentos conforme a necessidade.</p>
+          </div>
+        </details>
+
+        <details class="group bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
+          <summary class="flex items-center justify-between p-6 cursor-pointer list-none hover:bg-emerald-50 transition-colors">
+            <div class="flex items-center gap-4">
+              <span class="bg-emerald-700 text-white w-12 h-12 rounded-xl flex items-center justify-center font-bold shadow-sm text-xl">04</span>
+              <span class="text-2xl font-bold text-gray-800">Finalização e Impacto Social</span>
+            </div>
+            <span class="text-emerald-600 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <div class="p-8 pt-0 text-gray-700 border-t border-gray-100 bg-gray-50 leading-relaxed text-lg">
+            <p>Assim que a doação é entregue e finalizada no sistema, o ciclo completa-se com a atualização imediata das métricas de impacto no painel do utilizador. É possível acompanhar o total de doações realizadas e como essas ações contribuíram para fortalecer a rede local de apoio.</p>
+          </div>
+        </details>
+      </div>
+    </section>
   </div>
 {% endblock %}
