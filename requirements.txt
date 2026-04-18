@@ -23,5 +23,5 @@ pytest==8.4.1
 Sphinx==8.1.3
 sphinx-rtd-theme==3.0.2
 
-# Servidor de Produção (para o Render/Heroku)
+# Servidor de Produção
 gunicorn==22.0.0
