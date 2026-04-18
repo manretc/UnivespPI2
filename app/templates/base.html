@@ -12,7 +12,6 @@
       href="{{ url_for('static', filename='css/style.css') }}"
     />
     <style>
-      /* Pequeno ajuste para garantir que o footer fique no final em páginas curtas */
       body {
         display: flex;
         flex-direction: column;
@@ -38,18 +37,17 @@
               <a
                 href="{{ url_for('main.index') }}"
                 class="font-bold text-xl text-emerald-600"
-                aria-current="{{ 'page' if request.endpoint == 'main.index' else None }}"
                 >Rede de Doações</a
               >
             {% else %}
               <a
                 href="{{ url_for('main.dashboard') }}"
                 class="font-bold text-xl text-emerald-600"
-                aria-current="{{ 'page' if request.endpoint == 'main.dashboard' else None }}"
                 >Rede de Doações</a
               >
             {% endif %}
           </div>
+
           <div class="flex items-center">
             {% if current_user.is_anonymous %}
               <a
@@ -58,15 +56,6 @@
                 aria-current="{{ 'page' if request.endpoint == 'main.index' else None }}"
                 >Início</a
               >
-            {% else %}
-              <a
-                href="{{ url_for('main.dashboard') }}"
-                class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200"
-                aria-current="{{ 'page' if request.endpoint == 'main.dashboard' else None }}"
-                >Início</a
-              >
-            {% endif %}
-            {% if current_user.is_anonymous %}
               <a
                 href="{{ url_for('main.impacto') }}"
                 class="px-3 py-2 rounded-md text-sm font-medium text-emerald-700 hover:bg-emerald-100 font-bold mr-2"
@@ -75,26 +64,24 @@
               <a
                 href="{{ url_for('main.login') }}"
                 class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200"
-                aria-current="{{ 'page' if request.endpoint == 'main.login' else None }}"
                 >Entrar</a
               >
               <a
                 href="{{ url_for('main.register') }}"
                 class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700"
-                aria-current="{{ 'page' if request.endpoint == 'main.register' else None }}"
                 >Registrar</a
               >
             {% else %}
-              <a
-                href="{{ url_for('main.impacto') }}"
-                class="px-3 py-2 rounded-md text-sm font-medium text-emerald-700 hover:bg-emerald-100 font-bold mr-2"
-                >Impacto Social 📊</a
-              >
               <a
                 href="{{ url_for('main.dashboard') }}"
                 class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200"
                 aria-current="{{ 'page' if request.endpoint == 'main.dashboard' else None }}"
                 >Painel</a
+              >
+              <a
+                href="{{ url_for('main.impacto') }}"
+                class="px-3 py-2 rounded-md text-sm font-medium text-emerald-700 hover:bg-emerald-100 font-bold mr-2"
+                >Impacto Social 📊</a
               >
               <a
                 href="{{ url_for('main.editar_perfil') }}"
@@ -113,19 +100,12 @@
       </div>
     </nav>
 
-    <main
-      id="conteudo-principal"
-      tabindex="-1"
-      class="flex-grow container mx-auto mt-8 p-4"
-    >
+    <main id="conteudo-principal" tabindex="-1" class="flex-grow container mx-auto mt-8 p-4">
       {% with messages = get_flashed_messages() %}
         {% if messages %}
           <div class="mb-4" aria-live="polite">
             {% for message in messages %}
-            <div
-              class="bg-yellow-200 border-l-4 border-yellow-500 text-yellow-700 p-4"
-              role="status"
-            >
+            <div class="bg-yellow-200 border-l-4 border-yellow-500 text-yellow-700 p-4" role="status">
               <p>{{ message }}</p>
             </div>
             {% endfor %}
@@ -137,9 +117,7 @@
     </main>
 
     <footer class="bg-white mt-8 py-4 text-center text-sm text-gray-500">
-      <p>
-        &copy; 2025 Rede de Doações de Alimentos. Todos os direitos reservados.
-      </p>
+      <p>&copy; 2025 Rede de Doações de Alimentos. Todos os direitos reservados.</p>
     </footer>
   </body>
 </html>

@@ -1,12 +1,27 @@
-Flask>=3.0,<4.0
-Flask-SQLAlchemy>=3.1,<4.0
-Flask-Migrate>=4.0,<5.0
-Flask-WTF>=1.2,<2.0
-Flask-Login>=0.6,<1.0
-python-dotenv>=1.0,<2.0
-psycopg2-binary>=2.9,<3.0
-requests>=2.31,<3.0
-gunicorn>=21.2,<23.0
-pytest>=8.0,<9.0
-email_validator>=2.1,<3.0
-alembic>=1.13,<2.0
+# Core da Aplicação Flask
+Flask==3.1.0
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.1.0
+Flask-Login==0.6.3
+Flask-WTF==1.2.1
+Flask-Moment==1.0.5
+Flask-Bootstrap==3.3.7.1
+
+# Banco de Dados e Segurança
+SQLAlchemy==2.0.38
+psycopg2-binary==2.9.10
+python-dotenv==1.0.1
+email-validator==2.2.0
+cryptography==45.0.6
+
+# Integração e Geolocalização
+googlemaps==4.10.0
+requests==2.32.3
+
+# Testes e Documentação
+pytest==8.4.1
+Sphinx==8.1.3
+sphinx-rtd-theme==3.0.2
+
+# Servidor de Produção
+gunicorn==22.0.0

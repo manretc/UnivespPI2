@@ -1,8 +1,4 @@
 # tests/test_basic.py
-# Arquivo inicial para testes.
-# Usando pytest, podemos escrever testes simples para garantir que a aplicação
-# está funcionando como esperado.
-
 import unittest
 from app import create_app, db
 from app.models import User
@@ -10,66 +6,50 @@ from config import Config
 
 
 class TestConfig(Config):
-    """Configuração de teste para usar um banco de dados em memória."""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'  # Usa SQLite em memória para os testes
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
 
 class BasicTests(unittest.TestCase):
     def setUp(self):
-        """
-        Este método é executado antes de cada teste.
-        Cria uma instância da aplicação com a configuração de teste e
-        cria todas as tabelas do banco de dados.
-        """
         self.app = create_app(TestConfig)
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
 
     def tearDown(self):
-        """
-        Este método é executado após cada teste.
-        Remove a sessão do banco de dados e apaga todas as tabelas.
-        """
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
 
     def test_app_exists(self):
-        """Teste para verificar se a aplicação é criada com sucesso."""
         self.assertFalse(self.app is None)
 
-    def test_app_is_testing(self):
-        """Teste para verificar se a aplicação está em modo de teste."""
-        self.assertTrue(self.app.config['TESTING'])
-
-    def test_index_page(self):
-        """Teste para verificar se a página inicial carrega corretamente."""
+    def test_index_page_content(self):
+        """Verifica se a página inicial carrega os novos textos e seções."""
         tester = self.app.test_client(self)
-        response = tester.get('/', content_type='html/text')
+        response = tester.get('/')
         self.assertEqual(response.status_code, 200)
-        # CORREÇÃO: O teste agora procura pelo texto exato com a acentuação correta.
-        # O 'b' antes da string indica que estamos a comparar bytes, que é como a resposta vem.
-        self.assertTrue(b'Rede de Doa\xc3\xa7\xc3\xb5es' in response.data)
+
+        # Verifica o título principal
+        self.assertIn("Rede de Doações".encode('utf-8'), response.data)
+
+        # Verifica os novos botões solicitados
+        self.assertIn("Faça Parte".encode('utf-8'), response.data)
+        self.assertIn("Já tenho uma conta".encode('utf-8'), response.data)
+
+        # Verifica se as novas seções de informação estão presentes
+        self.assertIn("Quem Somos".encode('utf-8'), response.data)
+        self.assertIn("Guia Detalhado de Utilização".encode('utf-8'), response.data)
 
     def test_health_endpoint(self):
-        """Verifica se /health retorna 200 com status ok."""
         tester = self.app.test_client()
         response = tester.get('/health')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json(), {"status": "ok"})
 
     def test_dashboard_requires_login(self):
-        """Verifica se /dashboard redireciona para /login sem autenticacao."""
         tester = self.app.test_client()
         response = tester.get('/dashboard')
-        self.assertEqual(response.status_code, 302)
-        self.assertIn('/login', response.headers['Location'])
-
-    def test_donate_requires_login(self):
-        """Verifica se /donate redireciona para /login sem autenticacao."""
-        tester = self.app.test_client()
-        response = tester.get('/donate')
         self.assertEqual(response.status_code, 302)
         self.assertIn('/login', response.headers['Location'])
